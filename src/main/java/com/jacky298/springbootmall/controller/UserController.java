@@ -22,7 +22,7 @@ public class UserController {
         Integer userId =  userService.register(userRegisterRequest);
         User user = userService.getUserById(userId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
 
     }
 
