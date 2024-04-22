@@ -40,7 +40,14 @@ public class ProductDaoImpl implements ProductDao {
             map.put("search", "%" + productQueryParam.getSearch() + "%");
         }
 
+        //sorting (ORDER BY只能用拼接)
         sql = sql + " ORDER BY " + productQueryParam.getOrderBy() + " " + productQueryParam.getSort();
+
+        //pagination
+        sql = sql + " LIMIT :limit OFFSET :offset ";
+        map.put("limit", productQueryParam.getLimit());
+        map.put("offset",productQueryParam.getOffset());
+
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 

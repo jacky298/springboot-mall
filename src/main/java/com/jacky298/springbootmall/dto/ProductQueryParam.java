@@ -5,6 +5,24 @@ public class ProductQueryParam {
     String sort;
     String search;
     String category;
+    Integer limit;
+    Integer offset;
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
 
     public String getOrderBy() {
         return orderBy;
