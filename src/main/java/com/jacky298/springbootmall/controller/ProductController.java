@@ -1,7 +1,8 @@
 package com.jacky298.springbootmall.controller;
 
 
-import com.jacky298.springbootmall.dataObject.ProductRequest;
+import com.jacky298.springbootmall.dto.ProductQueryParam;
+import com.jacky298.springbootmall.dto.ProductRequest;
 import com.jacky298.springbootmall.model.Product;
 import com.jacky298.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
@@ -21,10 +22,21 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(
+            //filtering
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
+
+            //sorting
+            @RequestParam(defaultValue = "desc") String sort,
+            @RequestParam(defaultValue = "created_date") String orderBy
     ){
-        List<Product> productList = productService.getProducts(category, search);
+        ProductQueryParam productQueryParam = new ProductQueryParam();
+        productQueryParam.setCategory(category);
+        productQueryParam.setSearch(search);
+        productQueryParam.setSort(sort);
+        productQueryParam.setOrderBy(orderBy);
+
+        List<Product> productList = productService.getProducts(productQueryParam);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }

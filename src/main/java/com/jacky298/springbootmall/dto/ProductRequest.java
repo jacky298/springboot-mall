@@ -1,4 +1,4 @@
-package com.jacky298.springbootmall.dataObject;
+package com.jacky298.springbootmall.dto;
 
 import jakarta.validation.constraints.NotNull;
 

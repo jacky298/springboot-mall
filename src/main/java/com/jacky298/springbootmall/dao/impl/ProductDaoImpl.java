@@ -1,7 +1,8 @@
 package com.jacky298.springbootmall.dao.impl;
 
 import com.jacky298.springbootmall.dao.ProductDao;
-import com.jacky298.springbootmall.dataObject.ProductRequest;
+import com.jacky298.springbootmall.dto.ProductQueryParam;
+import com.jacky298.springbootmall.dto.ProductRequest;
 import com.jacky298.springbootmall.model.Product;
 import com.jacky298.springbootmall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +23,24 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts(String category, String search) {
+    public List<Product> getProducts(ProductQueryParam productQueryParam) {
 
         String sql = "SELECT product_id,product_name, category, image_url, price, stock, description, created_date, last_modified_date "+
             "FROM product WHERE 1 = 1";
 
         Map<String, Object> map = new HashMap<>();
 
-        if(category != null){
+        if(productQueryParam.getCategory() != null){
             sql = sql + " AND category = :category";
-            map.put("category", category);
+            map.put("category", productQueryParam.getCategory());
         }
 
-        if(search != null){
+        if(productQueryParam.getSearch() != null){
             sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + search + "%");
+            map.put("search", "%" + productQueryParam.getSearch() + "%");
         }
+
+        sql = sql + " ORDER BY " + productQueryParam.getOrderBy() + " " + productQueryParam.getSort();
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
