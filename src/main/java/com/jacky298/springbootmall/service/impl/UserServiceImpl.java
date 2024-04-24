@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -28,6 +31,9 @@ public class UserServiceImpl implements UserService {
             log.warn("該email {} 已經被註冊",userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+
+        String hashPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
+        userRegisterRequest.setPassword(hashPassword);
         
         //create an account
         return userDAO.createUser(userRegisterRequest);
@@ -42,12 +48,15 @@ public class UserServiceImpl implements UserService {
     public User login(UserDoc userDoc) {
         User user = userDAO.getUserByEmail(userDoc.getEmail());
 
+        //check if the user exist.
         if(user == null){
             log.warn("此email {}尚未註冊",userDoc.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        if(user.getPassword().equals(userDoc.getPassword())){
+        //compared with these two password
+        String hashPassword = DigestUtils.md5DigestAsHex(userDoc.getPassword().getBytes());
+        if(hashPassword.equals(user.getPassword()) ){
             return user;
         }else{
             log.warn("密碼不正確");
